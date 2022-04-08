@@ -1,6 +1,9 @@
 import requests
 import sys
 import numpy as np
+import csv
+from datetime import datetime
+
 
 def download_news(token):
     sources = requests.get(
@@ -27,8 +30,13 @@ def download_news(token):
     data_with_nan = []
     for i in sources_with_headlines_flat:
         data_with_nan.append(i + [None]*(pad-len(i)))
-    data_with_nan = np.array(data_with_nan)
-    print(data_with_nan.transpose())
+    data_with_nan = np.array(data_with_nan).transpose()
+
+    now = datetime.now().strftime('%Y-%m-%d_%H-%M-%S')
+    with open(f'./{now}_headlines.csv', 'w', newline='') as csv_file:
+        csv_writer = csv.writer(csv_file)
+        csv_writer.writerows(data_with_nan)
+
 
 if __name__ == "__main__":
     download_news(
